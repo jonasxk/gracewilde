@@ -3,8 +3,9 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Landing Page with Countdown</title>
+    <title>Landing Page with Approval Odds</title>
     <style>
+        /* Previous styles remain the same until .action-item */
         body {
             font-family: Arial, sans-serif;
             margin: 0;
@@ -14,16 +15,15 @@
             align-items: center;
             flex-direction: column;
             height: 100vh;
-            background-color: #1a1a1a; /* Black tone background */
+            background-color: #1a1a1a;
             text-align: center;
             color: white;
         }
 
-        /* Padding before the video */
         .video-container {
             width: 100%;
             max-width: 360px;
-            margin: 40px 0 20px; /* 40px padding before the video */
+            margin: 40px 0 20px;
         }
 
         .video-container video {
@@ -32,7 +32,6 @@
             border-radius: 10px;
         }
 
-        /* Text and Buttons container */
         .content {
             max-width: 720px;
             padding: 0 20px;
@@ -57,7 +56,6 @@
             color: #ff4d4d;
         }
 
-        /* Button base styles */
         .button {
             display: block;
             width: 100%;
@@ -69,10 +67,10 @@
             font-weight: bold;
             text-align: center;
             text-decoration: none;
-            transition: background-color 0.3s ease, color 0.3s ease;
+            transition: all 0.3s ease;
+            cursor: pointer;
         }
 
-        /* Instagram button */
         .button-instagram {
             background-color: transparent;
             color: #fff;
@@ -93,7 +91,6 @@
             color: #fff;
         }
 
-        /* Increase Approval Odds button */
         .button-outline {
             background-color: transparent;
             color: #ff4d4d;
@@ -105,10 +102,10 @@
             color: #fff;
         }
 
-        /* Skip Approval button */
         .button-rosa {
-            background-color: #ff69b4; /* Pink/rosa */
+            background-color: #ff69b4;
             color: #fff;
+            border: none;
         }
 
         .button-rosa:hover {
@@ -121,24 +118,25 @@
             margin-top: 10px;
         }
 
-        /* Panel styles */
         .panel {
             position: fixed;
-            bottom: 100%; /* Start off screen (below view) */
+            bottom: -100%;
             left: 0;
-            width: 100%; /* Panel width */
-            height: 70%; /* Height of the panel */
+            width: 100%;
+            height: 70%;
             background: #2e2e2e;
             display: flex;
             flex-direction: column;
-            justify-content: center;
+            justify-content: flex-start;
             align-items: center;
-            transition: bottom 0.3s ease; /* Smooth slide effect */
+            transition: bottom 0.3s ease;
             z-index: 10;
+            padding: 40px 20px;
+            box-sizing: border-box;
         }
 
         .panel.open {
-            bottom: 0; /* Slide in */
+            bottom: 0;
         }
 
         .close-btn {
@@ -148,9 +146,91 @@
             cursor: pointer;
             color: white;
             font-size: 24px;
+            background: none;
+            border: none;
+            padding: 10px;
         }
 
-        /* Responsive design for mobile */
+        .panel h2 {
+            font-size: 24px;
+            margin-bottom: 10px;
+            color: #fff;
+        }
+
+        .panel h3 {
+            font-size: 18px;
+            margin-bottom: 20px;
+            color: #bbb;
+        }
+
+        .action-item {
+            background: #3e3e3e;
+            padding: 20px;
+            border-radius: 10px;
+            margin: 10px 0;
+            width: 100%;
+            max-width: 300px;
+        }
+
+        .action-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 15px;
+        }
+
+        .action-title {
+            font-size: 16px;
+            color: #fff;
+        }
+
+        .action-bonus {
+            color: #ff4d4d;
+            font-weight: bold;
+        }
+
+        .action-button {
+            padding: 10px 20px;
+            border-radius: 20px;
+            font-size: 16px;
+            font-weight: bold;
+            cursor: pointer;
+            width: 100%;
+            transition: all 0.3s ease;
+        }
+
+        .action-button.incomplete {
+            background-color: transparent;
+            border: 2px solid #ff4d4d;
+            color: #fff;
+        }
+
+        .action-button.incomplete:hover {
+            background-color: #ff4d4d;
+            color: #fff;
+        }
+
+        .action-button.completed {
+            background-color: #4CAF50;
+            border: none;
+            color: white;
+            cursor: default;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .action-button.completed::after {
+            content: '✓';
+            margin-left: 8px;
+        }
+
+        .odds-value {
+            font-size: 24px;
+            color: #ff4d4d;
+            margin: 20px 0;
+        }
+
         @media (max-width: 768px) {
             h1 {
                 font-size: 20px;
@@ -171,8 +251,6 @@
     </style>
 </head>
 <body>
-
-    <!-- Video Section -->
     <div class="video-container">
         <video autoplay muted loop>
             <source src="testvideo.mp4" type="video/mp4">
@@ -180,72 +258,27 @@
         </video>
     </div>
 
-    <!-- Content Section -->
     <div class="content">
         <h1>Since I only have so much time I wanna make sure I talk to the right people. Please fill out the application and I'll review it personally.</h1>
 
-        <p>Ur current chance of approval is <strong>10%</strong></p>
+        <p>Ur current chance of approval is <strong id="currentOdds">10</strong>%</p>
 
-        <!-- Countdown -->
         <div class="countdown" id="countdown"></div>
 
-        <!-- Buttons -->
-        <a href="#" class="button button-outline">Increase Approval Odds</a>
+        <a href="#" class="button button-outline" id="increaseOddsBtn">Increase Approval Odds</a>
 
-        <!-- Instagram Button with Icon -->
         <a href="#" class="button button-instagram" id="instagramBtn">
             <img src="https://upload.wikimedia.org/wikipedia/commons/a/a5/Instagram_icon.png" alt="Instagram">Instagram
         </a>
 
-        <script>
-            document.getElementById('instagramBtn').addEventListener('click', function(event) {
-                event.preventDefault();
-
-                // Function to detect if the user is on a mobile device
-                function isMobile() {
-                    return /Android|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
-                }
-
-                // Try to open the Instagram app if on mobile
-                if (isMobile()) {
-                    // Create a hidden iframe to try opening the Instagram app
-                    const appLink = "instagram://user?username=golfbabegrace";
-                    const webLink = "https://www.instagram.com/golfbabegrace";
-
-                    let timeout;
-
-                    // Create a fallback to the Instagram web page if the app doesn't open
-                    timeout = setTimeout(function() {
-                        window.open(webLink, '_blank'); // Open web link in a new tab
-                    }, 2000); // Wait 2 seconds before fallback
-
-                    // Try to open the Instagram app
-                    window.location.href = appLink;
-
-                    // Clear the timeout if the user chooses to open the app
-                    window.addEventListener('blur', function() {
-                        clearTimeout(timeout);
-                    });
-
-                } else {
-                    // If the user is not on mobile, open the Instagram web page in a new tab
-                    window.open("https://www.instagram.com/golfbabegrace", "_blank");
-                }
-            });
-        </script>
-
-
-
         <a href="#" class="button button-rosa" id="skipApprovalBtn">Skip approval</a>
 
-        <!-- Footer Text -->
         <p class="small-text">only 1 of 3 spots left for today</p>
     </div>
 
-    <!-- Panel Section -->
-    <div class="panel" id="approvalPanel">
-        <span class="close-btn" id="closePanel">&times;</span>
-        <img src="hourglass.png" alt="Hourglass" style="width: 50px; margin-bottom: 15px;">
+    <!-- Skip Approval Panel -->
+    <div class="panel" id="skipApprovalPanel">
+        <button class="close-btn" id="closeSkipPanel">&times;</button>
         <h2>Skip Approval</h2>
         <h3>Skip the line & start chatting with me</h3>
         <p>1 Month</p>
@@ -253,36 +286,129 @@
         <a href="#" class="button button-rosa">Continue</a>
     </div>
 
+    <!-- Increase Odds Panel -->
+    <div class="panel" id="increaseOddsPanel">
+        <button class="close-btn" id="closeOddsPanel">&times;</button>
+        <h2>Ur Odds Of Approval Are <span id="panelOdds">10</span>%</h2>
+        <h3>Complete actions to increase ur odds</h3>
+        <div class="action-item">
+            <div class="action-header">
+                <span class="action-title">Follow me on Instagram</span>
+                <span class="action-bonus">+10% Odds</span>
+            </div>
+            <button id="followInstagramBtn" class="action-button incomplete">
+                Follow @golfbabegrace
+            </button>
+        </div>
+    </div>
+
     <script>
-        // Countdown logic
-        const userTimestamp = localStorage.getItem('userVisitTimestamp');
-        const countdownDisplay = document.getElementById('countdown');
-        
-        if (!userTimestamp) {
-            const currentTime = new Date().getTime();
-            localStorage.setItem('userVisitTimestamp', currentTime);
-            startCountdown(24 * 60 * 60 * 1000);
-        } else {
-            const now = new Date().getTime();
-            const elapsedTime = now - userTimestamp;
-            const remainingTime = (24 * 60 * 60 * 1000) - elapsedTime;
-            
-            if (remainingTime <= 0) {
-                countdownDisplay.innerHTML = "Offer has expired!";
-            } else {
-                startCountdown(remainingTime);
+        // User actions state management
+        const USER_ACTIONS_KEY = 'userCompletedActions';
+        const APPROVAL_ODDS_KEY = 'userApprovalOdds';
+
+        const userState = {
+            completedActions: JSON.parse(localStorage.getItem(USER_ACTIONS_KEY) || '{}'),
+            approvalOdds: parseInt(localStorage.getItem(APPROVAL_ODDS_KEY) || '10')
+        };
+
+        // Initialize approval odds
+        const updateOdds = (newOdds) => {
+            userState.approvalOdds = newOdds;
+            localStorage.setItem(APPROVAL_ODDS_KEY, newOdds.toString());
+            document.getElementById('currentOdds').textContent = newOdds;
+            document.getElementById('panelOdds').textContent = newOdds;
+        };
+
+        // Update UI based on completed actions
+        const updateActionButtons = () => {
+            const followInstagramBtn = document.getElementById('followInstagramBtn');
+            if (userState.completedActions.instagram) {
+                followInstagramBtn.classList.remove('incomplete');
+                followInstagramBtn.classList.add('completed');
+                followInstagramBtn.textContent = 'Followed';
+                followInstagramBtn.disabled = true;
             }
-        }
+        };
 
-        function startCountdown(duration) {
-            let timer = duration, hours, minutes, seconds;
+        // Initialize UI
+        updateOdds(userState.approvalOdds);
+        updateActionButtons();
 
-            const countdownInterval = setInterval(function () {
-                hours = Math.floor(timer / (1000 * 60 * 60));
-                minutes = Math.floor((timer % (1000 * 60 * 60)) / (1000 * 60));
-                seconds = Math.floor((timer % (1000 * 60)) / 1000);
+        // Instagram functionality
+        const handleInstagramClick = (e) => {
+            e.preventDefault();
+            window.open('https://www.instagram.com/golfbabegrace', '_blank');
+        };
+
+        // Panel Instagram follow functionality
+        const handleFollowInstagram = (e) => {
+            e.preventDefault();
+            const username = 'golfbabegrace';
+            
+            if (!userState.completedActions.instagram) {
+                if (/Android|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent)) {
+                    const appLink = `instagram://user?username=${username}`;
+                    const webLink = `https://www.instagram.com/${username}`;
+                    
+                    const timeout = setTimeout(() => {
+                        window.location.href = webLink;
+                    }, 2000);
+
+                    window.location.href = appLink;
+
+                    window.addEventListener('blur', () => {
+                        clearTimeout(timeout);
+                    });
+                } else {
+                    window.open(`https://www.instagram.com/${username}`, '_blank');
+                }
+
+                // Mark action as completed and update odds
+                userState.completedActions.instagram = true;
+                localStorage.setItem(USER_ACTIONS_KEY, JSON.stringify(userState.completedActions));
+                updateOdds(userState.approvalOdds + 10);
+                updateActionButtons();
+            }
+        };
+
+        // Event listeners
+        document.getElementById('instagramBtn').addEventListener('click', handleInstagramClick);
+        document.getElementById('followInstagramBtn').addEventListener('click', handleFollowInstagram);
+
+        // Panel functionality
+        const skipApprovalPanel = document.getElementById('skipApprovalPanel');
+        const increaseOddsPanel = document.getElementById('increaseOddsPanel');
+
+        document.getElementById('skipApprovalBtn').addEventListener('click', (e) => {
+            e.preventDefault();
+            skipApprovalPanel.classList.add('open');
+        });
+
+        document.getElementById('increaseOddsBtn').addEventListener('click', (e) => {
+            e.preventDefault();
+            increaseOddsPanel.classList.add('open');
+        });
+
+        document.getElementById('closeSkipPanel').addEventListener('click', () => {
+            skipApprovalPanel.classList.remove('open');
+        });
+
+        document.getElementById('closeOddsPanel').addEventListener('click', () => {
+            increaseOddsPanel.classList.remove('open');
+        });
+
+        // Countdown functionality
+        const startCountdown = (duration) => {
+            let timer = duration;
+            const countdownDisplay = document.getElementById('countdown');
+            
+            const countdownInterval = setInterval(() => {
+                const hours = Math.floor(timer / (1000 * 60 * 60));
+                const minutes = Math.floor((timer % (1000 * 60 * 60)) / (1000 * 60));
+                const seconds = Math.floor((timer % (1000 * 60)) / 1000);
                 
-                countdownDisplay.innerHTML = hours + "h " + minutes + "m " + seconds + "s ";
+                countdownDisplay.innerHTML = `${hours}h ${minutes}m ${seconds}s`;
                 
                 if (timer <= 0) {
                     clearInterval(countdownInterval);
@@ -291,29 +417,35 @@
 
                 timer -= 1000;
             }, 1000);
+        };
+
+        // Initialize countdown
+        const userTimestamp = localStorage.getItem('userVisitTimestamp');
+        if (!userTimestamp) {
+            const currentTime = new Date().getTime();
+            localStorage.setItem('userVisitTimestamp', currentTime);
+            startCountdown(24 * 60 * 60 * 1000);
+        } else {
+            const now = new Date().getTime();
+            const elapsedTime = now - parseInt(userTimestamp);
+            const remainingTime = (24 * 60 * 60 * 1000) - elapsedTime;
+            
+            if (remainingTime <= 0) {
+                document.getElementById('countdown').innerHTML = "Offer has expired!";
+            } else {
+                startCountdown(remainingTime);
+            }
         }
 
-        // Show and hide panel
-        const skipApprovalBtn = document.getElementById('skipApprovalBtn');
-        const approvalPanel = document.getElementById('approvalPanel');
-        const closePanel = document.getElementById('closePanel');
-
-        skipApprovalBtn.addEventListener('click', function (event) {
-            event.preventDefault();
-            approvalPanel.classList.add('open'); // Show the panel
-        });
-
-        closePanel.addEventListener('click', function () {
-            approvalPanel.classList.remove('open'); // Hide the panel
-        });
-
-        // Close panel when clicking outside of it
-        approvalPanel.addEventListener('click', function (event) {
-            if (event.target === approvalPanel) {
-                approvalPanel.classList.remove('open'); // Hide the panel
+        // Close panels when clicking outside
+        window.addEventListener('click', (e) => {
+            if (e.target === skipApprovalPanel) {
+                skipApprovalPanel.classList.remove('open');
+            }
+            if (e.target === increaseOddsPanel) {
+                increaseOddsPanel.classList.remove('open');
             }
         });
     </script>
-
 </body>
 </html>
