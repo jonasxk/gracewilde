@@ -193,9 +193,48 @@
         <a href="#" class="button button-outline">Increase Approval Odds</a>
 
         <!-- Instagram Button with Icon -->
-        <a href="instagram://user?username=golfbabegrace" class="button button-instagram" target="_blank">
+        <a href="#" class="button button-instagram" id="instagramBtn">
             <img src="https://upload.wikimedia.org/wikipedia/commons/a/a5/Instagram_icon.png" alt="Instagram">Instagram
         </a>
+
+        <script>
+            document.getElementById('instagramBtn').addEventListener('click', function(event) {
+                event.preventDefault();
+
+                // Function to detect if the user is on a mobile device
+                function isMobile() {
+                    return /Android|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
+                }
+
+                // Try to open the Instagram app if on mobile
+                if (isMobile()) {
+                    // Create a hidden iframe to try opening the Instagram app
+                    const appLink = "instagram://user?username=golfbabegrace";
+                    const webLink = "https://www.instagram.com/golfbabegrace";
+
+                    let timeout;
+
+                    // Create a fallback to the Instagram web page if the app doesn't open
+                    timeout = setTimeout(function() {
+                        window.open(webLink, '_blank'); // Open web link in a new tab
+                    }, 2000); // Wait 2 seconds before fallback
+
+                    // Try to open the Instagram app
+                    window.location.href = appLink;
+
+                    // Clear the timeout if the user chooses to open the app
+                    window.addEventListener('blur', function() {
+                        clearTimeout(timeout);
+                    });
+
+                } else {
+                    // If the user is not on mobile, open the Instagram web page in a new tab
+                    window.open("https://www.instagram.com/golfbabegrace", "_blank");
+                }
+            });
+        </script>
+
+
 
         <a href="#" class="button button-rosa" id="skipApprovalBtn">Skip approval</a>
 
